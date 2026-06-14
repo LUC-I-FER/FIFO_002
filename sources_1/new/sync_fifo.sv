@@ -31,11 +31,26 @@ module sync_fifo #(
             dout   <= 0;
         end
         else begin
+        
             if (wr_en && !full) begin
                 mem[wr_ptr] <= din;
                 wr_ptr <= wr_ptr + 1;
                 count <= count + 1;
             end
+            
+            else if (rd_en && !empty) begin
+                dout <= mem[rd_ptr];
+                rd_ptr <= rd_ptr + 1;
+                count <= count - 1;
+            end
+            
+            else if (wr_en && rd_en && !full && !empty) begin
+                mem[wr_ptr] <= din;
+                dout <= mem[rd_ptr];
+                wr_ptr <= wr_ptr + 1;
+                rd_ptr <= rd_ptr + 1;
+            end
+            
         end
     end
     
